@@ -5,8 +5,14 @@ const Positions = () => {
   const [positions, setPositions] = useState([]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token"); // ✅ Get token from localStorage
+
     axios
-      .get("http://localhost:3002/allPositions")
+      .get("http://localhost:3002/positions/allPositions", {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Send token in Authorization header
+        },
+      })
       .then((res) => {
         console.log("Fetched Positions:", res.data);
         setPositions(res.data);
@@ -46,7 +52,7 @@ const Positions = () => {
 
               return (
                 <tr key={index}>
-                  <td>{stock.product}</td>
+                  <td>{stock.product || "MIS"}</td>
                   <td>{stock.name}</td>
                   <td>{stock.qty}</td>
                   <td>{stock.avg.toFixed(2)}</td>

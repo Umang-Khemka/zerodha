@@ -1,5 +1,6 @@
 const { OrdersModel } = require("../models/OrdersModel");
 const { HoldingsModel } = require("../models/HoldingsModel");
+const { PositionModel } = require("../models/PositionModel"); // ✅ Added
 
 exports.createOrder = async (req, res) => {
   try {
@@ -48,6 +49,36 @@ exports.createOrder = async (req, res) => {
 
         await existing.save();
       }
+
+      // ✅ POSITION logic for BUY
+      const existingPosition = await PositionModel.findOne({ name, userId });
+
+      if (!existingPosition) {
+        const newPosition = new PositionModel({
+          userId,
+          name,
+          qty,
+          avg: price,
+          price,
+          day: "+0.0%", // placeholder
+          isLoss: false,
+        });
+        await newPosition.save();
+      } else {
+        const totalQty = existingPosition.qty + qty;
+        const totalCost = existingPosition.avg * existingPosition.qty + price * qty;
+        const newAvg = totalCost / totalQty;
+        const newPrice = +(newAvg * (1 + (Math.random() * 0.1 - 0.05))).toFixed(2);
+
+        existingPosition.qty = totalQty;
+        existingPosition.avg = newAvg;
+        existingPosition.price = newPrice;
+        existingPosition.day = "+0.0%";
+        existingPosition.isLoss = newPrice < newAvg;
+
+        await existingPosition.save();
+      }
+
     } else if (mode === "SELL") {
       if (!existing || existing.qty < qty) {
         return res.status(400).json({ message: "Not enough quantity to sell" });
@@ -59,9 +90,22 @@ exports.createOrder = async (req, res) => {
       } else {
         await existing.save();
       }
+
+      // ✅ POSITION logic for SELL
+      const existingPosition = await PositionModel.findOne({ name, userId });
+
+      if (existingPosition && existingPosition.qty >= qty) {
+        existingPosition.qty -= qty;
+
+        if (existingPosition.qty === 0) {
+          await PositionModel.deleteOne({ _id: existingPosition._id });
+        } else {
+          await existingPosition.save();
+        }
+      }
     }
 
-    res.json({ message: "Order saved and holdings updated" });
+    res.json({ message: "Order saved and holdings/positions updated" });
   } catch (err) {
     console.error("Error processing order:", err);
     res.status(500).json({ message: "Error processing order" });
