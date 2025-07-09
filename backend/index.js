@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.get("/", (req, res) => res.send("API is running"));
-app.use("/auth", require("./Routes/authRoutes"));
+app.use("/", require("./Routes/authRoutes"));
 app.use("/holdings", require("./Routes/holdingsRoutes"));
 app.use("/positions", require("./Routes/positionRoutes"));
 app.use("/orders", require("./Routes/orderRoutes"));

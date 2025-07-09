@@ -1,22 +1,26 @@
-
 import React from "react";
 
 const Category = ({ icon, title, links }) => {
   return (
-    <div className="col-md-4 p-4">
-      <h5 className="mb-3">
-        <i className={`me-2 ${icon}`} aria-hidden="true"></i>
-        {title}
-      </h5>
-      {links.map((linkText, index) => (
-        <a
-          key={index}
-          href="#"
-          style={{ textDecoration: "none", lineHeight: "2.2", display: "block" }}
-        >
-          {linkText}
-        </a>
-      ))}
+    <div className="col-lg-4 col-md-6 p-4">
+      <section>
+        <h5 className="mb-3">
+          <i className={`me-2 ${icon}`} aria-hidden="true"></i>
+          {title}
+        </h5>
+        <nav aria-label={`${title} links`}>
+          {links.map((linkText, index) => (
+            <a
+              key={index}
+              href="#"
+              className="d-block mb-1 text-decoration-none text-dark"
+              style={{ lineHeight: "1.8" }}
+            >
+              {linkText}
+            </a>
+          ))}
+        </nav>
+      </section>
     </div>
   );
 };

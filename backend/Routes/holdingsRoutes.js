@@ -3,6 +3,6 @@ const router = express.Router();
 const { getHoldings } = require("../controllers/holdingsController");
 const verifyToken = require("../middlewares/authMiddleware");
 
-router.get("/", verifyToken, getHoldings);
+router.get("/allHoldings", verifyToken, getHoldings);
 
 module.exports = router;

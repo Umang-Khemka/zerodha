@@ -11,39 +11,50 @@ function LeftSection({
 }) {
   return (
     <div className="container mt-5">
-      <div className="row">
-        <div className="col-6">
-          <img src={imageURL}></img>
+      <div className="row align-items-center">
+        {/* Left Image Section */}
+        <div className="col-md-6 text-center">
+          <img src={imageURL} alt={productName} className="img-fluid" />
         </div>
-        <div className="col-6 p-5 mt-5">
+
+        {/* Right Text Section */}
+        <div className="col-md-6 p-5">
           <h1>{productName}</h1>
           <p>{productDescription}</p>
-          <div>
-            <a href={tryDemo} className="text-decoration-none">
-              {tryDemo}
-              {tryDemo && <i className="fa-solid fa-arrow-right-long ms-2"></i>}
-            </a>
-            <a
-              href={learnMore}
-              style={{ marginLeft: "50px" }}
-              className="text-decoration-none"
-            >
-              {learnMore}
-              {learnMore && (
-                <i className="fa-solid fa-arrow-right-long ms-2"></i>
-              )}
-            </a>
+
+          {/* Links */}
+          <div className="my-3">
+            {tryDemo && (
+              <a href={tryDemo} className="text-decoration-none me-4">
+                Try demo <i className="fa-solid fa-arrow-right-long ms-1"></i>
+              </a>
+            )}
+            {learnMore && (
+              <a href={learnMore} className="text-decoration-none">
+                Learn more <i className="fa-solid fa-arrow-right-long ms-1"></i>
+              </a>
+            )}
           </div>
+
+          {/* App badges */}
           <div className="mt-3">
-            <a href={googlePlay}>
-              <img src="media/images/googlePlayBadge.svg"></img>
-            </a>
-            <a href={appStore}>
-              <img
-                src="media/images/appstoreBadge.svg"
-                style={{ marginLeft: "20px" }}
-              ></img>
-            </a>
+            {googlePlay && (
+              <a href={googlePlay}>
+                <img
+                  src="media/images/googlePlayBadge.svg"
+                  alt="Google Play"
+                  className="me-3"
+                />
+              </a>
+            )}
+            {appStore && (
+              <a href={appStore}>
+                <img
+                  src="media/images/appstoreBadge.svg"
+                  alt="App Store"
+                />
+              </a>
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import {
   Chart as ChartJS,
@@ -23,6 +21,7 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
+  maintainAspectRatio: false, // Allow container to control height
   plugins: {
     legend: {
       position: "top",
@@ -35,5 +34,13 @@ export const options = {
 };
 
 export function VerticalGraph({ data }) {
-  return <Bar options={options} data={data} />;
+  return (
+    <div className="container mb-4">
+      <div className="card shadow p-3">
+        <div className="chart-container" style={{ position: "relative", height: "400px" }}>
+          <Bar options={options} data={data} />
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -13,26 +13,23 @@ function Holdings() {
     const fetchHoldings = async () => {
       try {
         const token = localStorage.getItem('token');
-        
         if (!token) {
           setError("Please login to view holdings");
-          navigate('/login'); // Redirect to login if no token
+          navigate('/login');
           return;
         }
 
-        const response = await axios.get("http://localhost:3002/allHoldings", {
+        const response = await axios.get("http://localhost:3002/holdings/allHoldings", {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        
+
         setAllHoldings(response.data);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch holdings:", err);
-        
         if (err.response?.status === 401) {
-          // Token is invalid or expired
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setError("Session expired. Please login again.");
@@ -48,7 +45,6 @@ function Holdings() {
     fetchHoldings();
   }, [navigate]);
 
-  // Calculate totals
   const calculateTotals = () => {
     let totalInvestment = 0;
     let currentValue = 0;
@@ -84,20 +80,21 @@ function Holdings() {
   };
 
   if (loading) {
-    return <div className="loading">Loading holdings...</div>;
+    return <div className="text-center mt-5">Loading holdings...</div>;
   }
 
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return <div className="alert alert-danger text-center mt-5">Error: {error}</div>;
   }
 
   return (
-    <>
-      <h3 className='title'>Holdings ({allHoldings.length})</h3>
+    <div className="container mt-4">
+      <h3 className="mb-4">Holdings ({allHoldings.length})</h3>
 
-      <div className='order-table'>
-        <table>
-          <thead>
+      {/* Holdings Table */}
+      <div className="table-responsive mb-4">
+        <table className="table table-bordered text-center">
+          <thead className="table-light">
             <tr>
               <th>Instrument</th>
               <th>Qty.</th>
@@ -112,15 +109,15 @@ function Holdings() {
           <tbody>
             {allHoldings.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center' }}>No holdings found</td>
+                <td colSpan="8">No holdings found</td>
               </tr>
             ) : (
               allHoldings.map((stock, index) => {
                 const curValue = stock.price * stock.qty;
                 const pl = curValue - (stock.avg * stock.qty);
                 const isProfit = pl >= 0;
-                const profClass = isProfit ? "profit" : "loss";
-                const dayClass = stock.day && stock.day.includes('-') ? "loss" : "profit";
+                const profClass = isProfit ? "text-success" : "text-danger";
+                const dayClass = stock.day && stock.day.includes('-') ? "text-danger" : "text-success";
 
                 return (
                   <tr key={stock._id || index}>
@@ -142,30 +139,35 @@ function Holdings() {
         </table>
       </div>
 
-      <div className='row'>
-        <div className='col'>
-          <h5>
-            {totalInvestment.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      {/* Summary Row */}
+      <div className="row text-center mb-5">
+        <div className="col-md-4 col-sm-12 mb-3">
+          <h5 className="mb-1">
+            ₹{totalInvestment.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h5>
           <p>Total investment</p>
         </div>
-        <div className='col'>
-          <h5>
-            {currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="col-md-4 col-sm-12 mb-3">
+          <h5 className="mb-1">
+            ₹{currentValue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </h5>
           <p>Current value</p>
         </div>
-        <div className='col'>
-          <h5>
-            {totalPL >= 0 ? '+' : ''}{totalPL.toFixed(2)} 
-            ({totalPL >= 0 ? '+' : ''}{totalPLPercentage.toFixed(2)}%)
+        <div className="col-md-4 col-sm-12 mb-3">
+          <h5 className={`mb-1 ${totalPL >= 0 ? "text-success" : "text-danger"}`}>
+            {totalPL >= 0 ? '+' : ''}{totalPL.toFixed(2)} ({totalPL >= 0 ? '+' : ''}{totalPLPercentage.toFixed(2)}%)
           </h5>
           <p>P&L</p>
         </div>
       </div>
-      
-      {allHoldings.length > 0 && <VerticalGraph data={data} />}
-    </>
+
+      {/* Vertical Graph */}
+      {allHoldings.length > 0 && (
+        <div className="mb-5">
+          <VerticalGraph data={data} />
+        </div>
+      )}
+    </div>
   );
 }
 

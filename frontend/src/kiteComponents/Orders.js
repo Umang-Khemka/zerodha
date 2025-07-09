@@ -168,7 +168,7 @@ const Orders = () => {
             <div className="col-12">
               <div className="card border-0 shadow-sm">
                 <div className="card-body p-0">
-                  <div className="table-responsive">
+                  <div className="table-responsive">  
                     <table className="table table-hover mb-0">
                       <thead className="table-dark">
                         <tr>

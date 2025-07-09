@@ -22,169 +22,108 @@ const Menu = () => {
         setIsProfileDropdownOpen(false);
       }
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  // Logout function
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
+      const token = localStorage.getItem("token");
       if (token) {
-        await fetch('http://localhost:3002/logout', {
-          method: 'POST',
+        await fetch("http://localhost:3002/logout", {
+          method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
       }
-      
-      // Remove token from storage
-      localStorage.removeItem('token');
-      
-      // Close dropdown
+      localStorage.removeItem("token");
       setIsProfileDropdownOpen(false);
-      
-      // Redirect to home page
-      navigate('/');
-      
+      navigate("/");
     } catch (error) {
-      console.error('Logout error:', error);
-      // Still remove token even if server request fails
-      localStorage.removeItem('token');
-      navigate('/');
+      console.error("Logout error:", error);
+      localStorage.removeItem("token");
+      navigate("/");
     }
   };
 
-  const menuClass = "menu";
-  const activeMenuClass = "menu selected";
+  const menuItems = [
+    { name: "Dashboard", to: "/dashboard" },
+    { name: "Orders", to: "/dashboard/orders" },
+    { name: "Holdings", to: "/dashboard/holdings" },
+    { name: "Positions", to: "/dashboard/positions" },
+    { name: "Funds", to: "/dashboard/funds" },
+  ];
 
   return (
-    <div className="menu-container">
-      <img src="/media/images/logo (1).png" style={{ width: "50px" }} />  
-      <div className="menus">
-        <ul>
-          <li>
+    <div className="d-flex align-items-center gap-4 ms-auto position-relative">
+      <img
+        src="/media/images/logo (1).png"
+        alt="Logo"
+        style={{ width: "48px", height: "48px" }}
+      />
+
+      <ul className="list-unstyled d-flex gap-3 mb-0 align-items-center">
+        {menuItems.map((item, index) => (
+          <li key={index}>
             <Link
-              style={{ textDecoration: "none" }}
-              to="/dashboard"
-              onClick={() => handleMenuClick(0)}
+              to={item.to}
+              onClick={() => handleMenuClick(index)}
+              className={`fw-medium text-decoration-none ${
+                selectedMenu === index ? "text-primary" : "text-dark"
+              }`}
             >
-              <p className={selectedMenu === 0 ? activeMenuClass : menuClass}>
-                Dashboard
-              </p>
+              {item.name}
             </Link>
           </li>
-          <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              to="/dashboard/orders"
-              onClick={() => handleMenuClick(1)}
-            >
-              <p className={selectedMenu === 1 ? activeMenuClass : menuClass}>
-                Orders
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              to="/dashboard/holdings"
-              onClick={() => handleMenuClick(2)}
-            >
-              <p className={selectedMenu === 2 ? activeMenuClass : menuClass}>
-                Holdings
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              to="/dashboard/positions"
-              onClick={() => handleMenuClick(3)}
-            >
-              <p className={selectedMenu === 3 ? activeMenuClass : menuClass}>
-                Positions
-              </p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              to="/dashboard/funds"
-              onClick={() => handleMenuClick(4)}
-            >
-              <p className={selectedMenu === 4 ? activeMenuClass : menuClass}>
-                Funds
-              </p>
-            </Link>
-          </li>
-        </ul>
-        <hr />
-        
-        {/* Bootstrap Profile Dropdown */}
-        <div className="dropdown" ref={dropdownRef}>
-          <div 
-            className="profile d-flex align-items-center" 
-            onClick={handleProfileClick}
-            style={{ cursor: 'pointer' }}
+        ))}
+      </ul>
+
+      {/* Profile Dropdown */}
+      <div className="dropdown" ref={dropdownRef}>
+        <div
+          className="d-flex align-items-center ms-4"
+          onClick={handleProfileClick}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center me-2" style={{ width: "32px", height: "32px", fontSize: "0.9rem" }}>
+            ZU
+          </div>
+          <span className="fw-semibold">USERID</span>
+          <i className={`bi bi-chevron-${isProfileDropdownOpen ? "up" : "down"} ms-2`}></i>
+        </div>
+
+        <div
+          className={`dropdown-menu mt-2 shadow-sm ${isProfileDropdownOpen ? "show" : ""}`}
+          style={{
+            position: "absolute",
+            right: 0,
+            zIndex: 999,
+            minWidth: "180px",
+            backgroundColor: "#fff",
+            borderRadius: "0.5rem",
+          }}
+        >
+          <Link className="dropdown-item" to="/" onClick={() => setIsProfileDropdownOpen(false)}>
+            <i className="bi bi-house me-2"></i> Home
+          </Link>
+          <Link className="dropdown-item" to="/profile" onClick={() => setIsProfileDropdownOpen(false)}>
+            <i className="bi bi-person me-2"></i> Profile
+          </Link>
+          <Link className="dropdown-item" to="/settings" onClick={() => setIsProfileDropdownOpen(false)}>
+            <i className="bi bi-gear me-2"></i> Settings
+          </Link>
+          <div className="dropdown-divider"></div>
+          <button
+            className="dropdown-item text-danger"
+            onClick={handleLogout}
+            style={{ border: "none", background: "none", textAlign: "left" }}
           >
-            <div className="avatar me-2">ZU</div>
-            <p className="username mb-0">USERID</p>
-            <i className={`bi bi-chevron-${isProfileDropdownOpen ? 'up' : 'down'} ms-2`}></i>
-          </div>
-          
-          {/* Dropdown Menu */}
-          <div className={`dropdown-menu ${isProfileDropdownOpen ? 'show' : ''}`} 
-               style={{ 
-                 position: 'absolute', 
-                 top: '100%', 
-                 left: '0', 
-                 zIndex: 1000,
-                 minWidth: '160px'
-               }}>
-            <Link 
-              className="dropdown-item" 
-              to="/"
-              onClick={() => {
-                setIsProfileDropdownOpen(false);
-                setSelectedMenu(-1); // Reset menu selection when going to home
-              }}
-            >
-              <i className="bi bi-house me-2"></i>
-              Home
-            </Link>
-            <Link 
-              className="dropdown-item" 
-              to="/profile"
-              onClick={() => setIsProfileDropdownOpen(false)}
-            >
-              <i className="bi bi-person me-2"></i>
-              Profile
-            </Link>
-            <Link 
-              className="dropdown-item" 
-              to="/settings"
-              onClick={() => setIsProfileDropdownOpen(false)}
-            >
-              <i className="bi bi-gear me-2"></i>
-              Settings
-            </Link>
-            <div className="dropdown-divider"></div>
-            <button 
-              className="dropdown-item text-danger" 
-              onClick={handleLogout}
-              style={{ border: 'none', background: 'none', textAlign: 'left' }}
-            >
-              <i className="bi bi-box-arrow-right me-2"></i>
-              Logout
-            </button>
-          </div>
+            <i className="bi bi-box-arrow-right me-2"></i> Logout
+          </button>
         </div>
       </div>
     </div>
