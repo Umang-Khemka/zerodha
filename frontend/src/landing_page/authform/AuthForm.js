@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const AuthForm = () => {
   const [isSignup, setIsSignup] = useState(true);
@@ -22,7 +22,7 @@ const AuthForm = () => {
       : { email: email.trim(), password };
 
     try {
-      const res = await axios.post(`http://localhost:3002/${endpoint}`, payload);
+      const res = await axiosInstance.post(`/auth/${endpoint}`, payload);
 
       if (isSignup) {
         setMessage("Account created successfully! Please login.");
