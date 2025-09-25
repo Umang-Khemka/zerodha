@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TradeActionWindow from "./TradeActionWindow";
 import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 const GeneralContext = React.createContext({
   openBuyWindow: (uid) => {},
@@ -41,7 +42,7 @@ export const GeneralContextProvider = (props) => {
       return;
     }
     
-  const res = await axios.get("http://localhost:3002/allHoldings", {
+  const res = await axiosInstance.get("/holdings/allHoldings", {
       headers: {
         Authorization: `Bearer ${token}`
       }

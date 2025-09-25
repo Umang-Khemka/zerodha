@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance.js";
 
 const Positions = () => {
   const [positions, setPositions] = useState([]);
@@ -7,8 +8,8 @@ const Positions = () => {
   useEffect(() => {
     const token = localStorage.getItem("token"); // ✅ Get token from localStorage
 
-    axios
-      .get("http://localhost:3002/positions/allPositions", {
+    axiosInstance
+      .get("/positions/allPositions", {
         headers: {
           Authorization: `Bearer ${token}`, // ✅ Send token in Authorization header
         },

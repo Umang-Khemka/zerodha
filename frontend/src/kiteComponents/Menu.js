@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance.js";
 
 const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
@@ -32,20 +33,21 @@ const Menu = () => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
-        await fetch("http://localhost:3002/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+        await axiosInstance.post("/auth/logout", {},
+          {
+            headers: 
+            {Authorization: `Bearer ${token}`},
           },
-        });
+        );
       }
-      localStorage.removeItem("token");
-      setIsProfileDropdownOpen(false);
-      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       localStorage.removeItem("token");
+      navigate("/");
+    } finally{
+       localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsProfileDropdownOpen(false);
       navigate("/");
     }
   };

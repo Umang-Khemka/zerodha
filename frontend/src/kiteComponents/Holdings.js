@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { VerticalGraph } from "./VerticalGraph";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance.js";
 
 function Holdings() {
   const [allHoldings, setAllHoldings] = useState([]);
@@ -19,7 +20,7 @@ function Holdings() {
           return;
         }
 
-        const response = await axios.get("http://localhost:3002/holdings/allHoldings", {
+        const response = await axiosInstance.get("/holdings/allHoldings", {
           headers: {
             Authorization: `Bearer ${token}`
           }

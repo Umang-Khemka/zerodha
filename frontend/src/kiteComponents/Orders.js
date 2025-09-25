@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance.js"
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -18,7 +19,7 @@ const Orders = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:3002/orders", {
+        const response = await axiosInstance.get("/orders", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import GeneralContext from "./GeneralContext";
+import axiosInstance from "../api/axiosInstance";
 
 const TradeActionWindow = ({ uid, mode, closeWindow }) => {
   const [stockQuantity, setStockQuantity] = useState(1);
@@ -28,8 +29,8 @@ const TradeActionWindow = ({ uid, mode, closeWindow }) => {
         return;
       }
 
-      await axios.post(
-        "http://localhost:3002/orders",
+      await axiosInstance.post(
+        "/orders",
         {
           name: uid,
           qty: Number(stockQuantity),

@@ -1,31 +1,38 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 // Middleware
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
-app.use(bodyParser.json());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(express.json());
 
-// Routes
+// Root route
 app.get("/", (req, res) => res.send("API is running"));
-app.use("/", require("./Routes/authRoutes"));
-app.use("/holdings", require("./Routes/holdingsRoutes"));
-app.use("/positions", require("./Routes/positionRoutes"));
-app.use("/orders", require("./Routes/orderRoutes"));
 
-// DB + Server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  mongoose
-    .connect(process.env.MONGO_URL)
-    .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.error("MongoDB connection error:", err));
-});
+// Versioned API routes
+app.use("/api/v1/auth", require("./Routes/authRoutes"));
+app.use("/api/v1/holdings", require("./Routes/holdingsRoutes"));
+app.use("/api/v1/positions", require("./Routes/positionRoutes"));
+app.use("/api/v1/orders", require("./Routes/orderRoutes"));
+
+// Serve frontend in production
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
+}
+
+// Connect DB + Start server
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
